@@ -38,7 +38,7 @@ function App() {
     const abbreviations = tunebooks
       .map((book) => `${book.abbreviation} `)
       .filter(Boolean); // `.filter(Boolean) removes falsy values
-    const pattern = `(?<!${abbreviations.join("|")})\\d+[tb]*`;
+    const pattern = `(?<!${abbreviations.join("|")}[0-9]*)\\d+[tb]*`;
     const primaryBookRegex = new RegExp(pattern, "g");
 
     const bookData = tunebooks.find((book) => book.id === tunebook);
