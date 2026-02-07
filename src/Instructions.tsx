@@ -1,8 +1,9 @@
 import { tunebooks } from "./tunebooks.ts";
+import "./App.css";
 
 export default function Instructions() {
   return (
-    <details>
+    <details className="instructions">
       <summary>💡 Click here for instructions!</summary>
       <ul>
         <li>
@@ -28,6 +29,10 @@ export default function Instructions() {
               </div>
             );
           })}
+        </li>
+        <li>
+          Example of two tunebooks
+          <img src="/screenshot.png" />
         </li>
         <li>
           <b>What is a "primary book"?</b> If page numbers of one book are not

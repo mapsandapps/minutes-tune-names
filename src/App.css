@@ -23,3 +23,10 @@ details {
 li {
   margin-bottom: 1rem;
 }
+
+.instructions {
+  img {
+    max-width: 100%;
+    border: 8px inset rgba(0, 0, 0, 0.25);
+  }
+}
