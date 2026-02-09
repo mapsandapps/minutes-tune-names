@@ -20,6 +20,10 @@ details {
   margin-bottom: 1rem;
 }
 
+details[open] {
+  border: 1px dashed black;
+}
+
 .book-page-order label:not(:last-child) {
   margin-bottom: auto;
 }
@@ -30,7 +34,7 @@ li {
 
 .instructions {
   img {
-    max-width: 100%;
+    max-width: calc(100% - 32px);
     border: 8px inset rgba(0, 0, 0, 0.25);
   }
 
@@ -53,4 +57,10 @@ li {
 
 code {
   background-color: #ffc62680;
+}
+
+.advanced-settings {
+  summary {
+    margin-bottom: 1rem;
+  }
 }

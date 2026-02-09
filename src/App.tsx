@@ -13,6 +13,7 @@ function App() {
   const [output, setOutput] = useState<string | undefined>();
   const [isUsingMultipleBooks, setUsingMultipleBooks] =
     useState<boolean>(false);
+  const [isTopDefault, setTopDefault] = useState<boolean>(false);
   const [bookPageOrder, setBookPageOrder] = useState("book-before-page");
 
   const replaceNumbersInText = () => {
@@ -21,27 +22,18 @@ function App() {
         replaceNumbersFromAllBooks(
           input,
           tunebook,
+          isTopDefault,
           bookPageOrder === "page-before-book",
         ),
       );
     } else {
-      setOutput(replaceNumbersFromPrimaryBook(input, tunebook));
+      setOutput(replaceNumbersFromPrimaryBook(input, tunebook, isTopDefault));
     }
-  };
-
-  const onChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-  };
-
-  const onChangeUsingMultipleBooks = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setUsingMultipleBooks(e.target.checked);
   };
 
   useEffect(() => {
     replaceNumbersInText();
-  }, [bookPageOrder, input, isUsingMultipleBooks, tunebook]);
+  }, [bookPageOrder, input, isTopDefault, isUsingMultipleBooks, tunebook]);
 
   return (
     <>
@@ -61,7 +53,7 @@ function App() {
         <input
           type="checkbox"
           checked={isUsingMultipleBooks}
-          onChange={onChangeUsingMultipleBooks}
+          onChange={(e) => setUsingMultipleBooks(e.target.checked)}
         />
       </label>
       {isUsingMultipleBooks && (
@@ -93,11 +85,24 @@ function App() {
           <Instructions />
         </>
       )}
+      <details className="advanced-settings">
+        <summary>Advanced settings</summary>
+
+        <label>
+          Are top-piece songs not explicitly marked? (e.g. should we assume SH
+          "45" is New Britain?)
+          <input
+            type="checkbox"
+            checked={isTopDefault}
+            onChange={(e) => setTopDefault(e.target.checked)}
+          />
+        </label>
+      </details>
       <label>
         Input:
         <textarea
           value={input}
-          onChange={onChangeInput}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Put your minutes without tune names here"
           rows={16}
           cols={64}

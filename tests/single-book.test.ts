@@ -49,4 +49,32 @@ Maygan 39T Detroit`;
       expectedOutput,
     );
   });
+
+  test("`isTopDefault` on", () => {
+    expect(replaceNumbersFromPrimaryBook("45", "denson2025", true)).toEqual(
+      "45 New Britain",
+    );
+    expect(replaceNumbersFromPrimaryBook("45t", "denson2025", true)).toEqual(
+      "45t New Britain",
+    );
+    expect(replaceNumbersFromAllBooks("45", "denson2025", true)).toEqual(
+      "45 New Britain",
+    );
+    expect(replaceNumbersFromAllBooks("45t", "denson2025", true)).toEqual(
+      "45t New Britain",
+    );
+  });
+
+  test("`isTopDefault` off", () => {
+    expect(replaceNumbersFromPrimaryBook("45", "denson2025", false)).toEqual(
+      "45",
+    );
+    expect(replaceNumbersFromPrimaryBook("45t", "denson2025", false)).toEqual(
+      "45t New Britain",
+    );
+    expect(replaceNumbersFromAllBooks("45", "denson2025", false)).toEqual("45");
+    expect(replaceNumbersFromAllBooks("45t", "denson2025", false)).toEqual(
+      "45t New Britain",
+    );
+  });
 });
