@@ -14,10 +14,12 @@ export const replaceNumbersFromAllBooks = (
 
     const bookMap = book.data;
 
-    const regex = new RegExp(book.abbreviation + " " + "\\d+[tb]*", "g");
+    const regex = new RegExp(book.abbreviation + " " + "\\d+[tbTB]*", "g");
 
     text = text.replace(regex, (match) => {
-      const pageNumber = match.replace(`${book.abbreviation} `, "");
+      const pageNumber = match
+        .replace(`${book.abbreviation} `, "")
+        .toLowerCase();
       // @ts-ignore
       return bookMap[pageNumber] ? `${match} ${bookMap[pageNumber]}` : match;
     });
@@ -31,7 +33,7 @@ export const replaceNumbersFromAllBooks = (
     .map((book) => `${book.abbreviation} `)
     .filter(Boolean); // `.filter(Boolean) removes falsy values
   // the first "\\d" is to keep the "78" part of "ShH 278" from matching
-  const pattern = `(?<!${abbreviations.join("|")}|\\d)\\d+[tb]*`;
+  const pattern = `(?<!${abbreviations.join("|")}|\\d)\\d+[tbTB]*`;
   const primaryBookRegex = new RegExp(pattern, "g");
 
   const bookData = tunebooks.find((book) => book.id === primaryTunebook);
@@ -39,8 +41,9 @@ export const replaceNumbersFromAllBooks = (
   const bookMap = bookData.data;
 
   text = text.replace(primaryBookRegex, (match) => {
+    const pageNumber = match.toLowerCase();
     // @ts-ignore
-    return bookMap[match] ? `${match} ${bookMap[match]}` : match;
+    return bookMap[pageNumber] ? `${match} ${bookMap[pageNumber]}` : match;
   });
 
   return text;
@@ -58,8 +61,9 @@ export const replaceNumbersFromPrimaryBook = (
     tunebooks.find((book) => book.id === primaryTunebook) || tunebooks[0];
   const bookMap = bookData.data;
 
-  return text.replace(/\d+[tb]*/g, (match) => {
+  return text.replace(/\d+[tbTB]*/g, (match) => {
+    const pageNumber = match.toLowerCase();
     // @ts-ignore
-    return bookMap[match] ? `${match} ${bookMap[match]}` : match;
+    return bookMap[pageNumber] ? `${match} ${bookMap[pageNumber]}` : match;
   });
 };

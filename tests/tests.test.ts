@@ -13,6 +13,14 @@ David B. taught a beginner's lesson, and we sang 70t.`,
     expectedOutput: `Jim opened with 56t Columbiana and offered a prayer.
 David B. taught a beginner's lesson, and we sang 70t Gainsville.`,
   },
+  {
+    testName: "Capital T or B",
+    input: `Delaney 47B
+Maygan 39T`,
+    primaryBook: "denson2025",
+    expectedOutput: `Delaney 47B Idumea
+Maygan 39T Detroit`,
+  },
 ];
 
 const multipleBookTestCases = [
