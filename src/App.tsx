@@ -13,10 +13,17 @@ function App() {
   const [output, setOutput] = useState<string | undefined>();
   const [isUsingMultipleBooks, setUsingMultipleBooks] =
     useState<boolean>(false);
+  const [bookPageOrder, setBookPageOrder] = useState("book-before-page");
 
   const replaceNumbersInText = () => {
     if (tunebook === "none" || isUsingMultipleBooks) {
-      setOutput(replaceNumbersFromAllBooks(input, tunebook));
+      setOutput(
+        replaceNumbersFromAllBooks(
+          input,
+          tunebook,
+          bookPageOrder === "page-before-book",
+        ),
+      );
     } else {
       setOutput(replaceNumbersFromPrimaryBook(input, tunebook));
     }
@@ -34,11 +41,10 @@ function App() {
 
   useEffect(() => {
     replaceNumbersInText();
-  }, [input, isUsingMultipleBooks, tunebook]);
+  }, [bookPageOrder, input, isUsingMultipleBooks, tunebook]);
 
   return (
     <>
-      <Instructions />
       <label>
         The primary book of the singing:
         <select value={tunebook} onChange={(e) => setTunebook(e.target.value)}>
@@ -58,6 +64,35 @@ function App() {
           onChange={onChangeUsingMultipleBooks}
         />
       </label>
+      {isUsingMultipleBooks && (
+        <>
+          <div className="book-page-order">
+            Book format:
+            <label>
+              <input
+                type="radio"
+                name="book-format"
+                value="book-before-page"
+                checked={bookPageOrder === "book-before-page"}
+                onChange={(e) => setBookPageOrder(e.target.value)}
+              />
+              Book before page, e.g. <code>ShH 278</code>
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="book-format"
+                value="page-before-book"
+                checked={bookPageOrder === "page-before-book"}
+                onChange={(e) => setBookPageOrder(e.target.value)}
+              />
+              Page before book, e.g. <code>278 (ShH)</code>
+            </label>
+          </div>
+
+          <Instructions />
+        </>
+      )}
       <label>
         Input:
         <textarea

@@ -30,10 +30,49 @@ Ernie: 168 Cowper`;
     );
   });
 
-  test("No primary book provided", () => {
+  test("no primary book provided", () => {
     const input = "Coop ShH 278";
     const expectedOutput = "Coop ShH 278 Hauff";
 
     expect(replaceNumbersFromAllBooks(input, "none")).toEqual(expectedOutput);
+  });
+
+  test("book before page, bad input", () => {
+    // written as page before book but "book before page" option is on
+    // this output is not what the user expects, but is correct for their settings
+    const input = `55t (EH 1)
+459 (1991)
+522 (CB)`;
+    const expectedOutput = `55t (EH 1 Windgate)
+459 Hurricane Creek (1991)
+522 Ye Heedless Ones (CB)`;
+
+    expect(replaceNumbersFromAllBooks(input, "denson2025", false)).toEqual(
+      expectedOutput,
+    );
+  });
+
+  test("page before book, bad input", () => {
+    // written as book before page but "page before book" option is on
+    // this output is not what the user expects, but is correct for their settings
+    const input = "EH 55t";
+    const expectedOutput = "EH 55t";
+
+    expect(replaceNumbersFromAllBooks(input, "denson2025", true)).toEqual(
+      expectedOutput,
+    );
+  });
+
+  test("page before book, correct input", () => {
+    const input = `55t (EH 1)
+459 (1991)
+522 (CB)`;
+    const expectedOutput = `55t (EH 1) Nearer, My God, to Thee
+459 (1991) Tolling Bell
+522 (CB) Shades of Night`;
+
+    expect(replaceNumbersFromAllBooks(input, "denson2025", true)).toEqual(
+      expectedOutput,
+    );
   });
 });

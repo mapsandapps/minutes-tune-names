@@ -21,6 +21,21 @@ David B. taught a beginner's lesson, and we sang 70t Gainsville.`;
     );
   });
 
+  test("bad input", () => {
+    // "multiple books" checkbox is unchecked, but multiple books have been provided
+    // garbage in, garbage out
+    const input = `55t (EH 1)
+EH 55t
+459 (1991)
+522 (CB)`;
+    const expectedOutput = `55t Carolina (EH 1 Weary Rest)
+EH 55t Carolina
+459 (1991)
+522 Newbury (CB)`;
+
+    expect(replaceNumbersFromPrimaryBook(input, "ch")).toEqual(expectedOutput);
+  });
+
   test("capital T or B", () => {
     const input = `Delaney 47B
 Maygan 39T`;

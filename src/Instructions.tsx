@@ -20,15 +20,28 @@ export default function Instructions() {
         </li>
         <li>
           Book abbreviations:
-          {tunebooks.map((book) => {
-            if (!book.abbreviation) return;
-
-            return (
-              <div>
-                {book.name}: {book.abbreviation}
-              </div>
-            );
-          })}
+          <table>
+            <thead>
+              <tr>
+                <td>Book</td>
+                <td>Book before page</td>
+                <td>Page before book</td>
+              </tr>
+            </thead>
+            <tbody>
+              {tunebooks.map((book) => {
+                return (
+                  <tr key={`book-row-${book.id}`}>
+                    <td>{book.name}</td>
+                    <td className={book.prefix ? "" : "no-prefix"}>
+                      {book.prefix || "N/A"}
+                    </td>
+                    <td>{book.suffix}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </li>
         <li>
           Example of two tunebooks
