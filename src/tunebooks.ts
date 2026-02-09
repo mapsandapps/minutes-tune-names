@@ -1,3 +1,11 @@
+export interface Tunebook {
+  name: string;
+  id: string;
+  data: { [key: string]: string };
+  prefix?: string;
+  suffix: string;
+}
+
 const denson2025 = {
   "25a": "Let Us Endeavor",
   "25b": "Bring the Songbook",
@@ -4192,7 +4200,7 @@ const vph = {
   "389": "Stone",
 };
 
-export const tunebooks = [
+export const tunebooks: Tunebook[] = [
   {
     name: "2025 Sacred Harp",
     id: "denson2025",
