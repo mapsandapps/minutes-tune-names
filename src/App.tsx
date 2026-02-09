@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { tunebooks } from "./tunebooks.ts";
 import Instructions from "./Instructions.tsx";
+import {
+  replaceNumbersFromAllBooks,
+  replaceNumbersFromPrimaryBook,
+} from "./helpers.ts";
 
 function App() {
   const [tunebook, setTunebook] = useState("denson2025"); // can be "none", as well as any tunebook from `tunebooks`
@@ -10,70 +14,11 @@ function App() {
   const [isUsingMultipleBooks, setUsingMultipleBooks] =
     useState<boolean>(false);
 
-  // find numbers
-  // if the number has a tunebook abbreviation before it, replace it from that page in the book
-  // if the number does not have a tunebook abbreviation before it, AND there is a primary book, replace the number with the page in the primary book
-  // ignore all other numbers
-  const replaceNumbersFromAllBooks = () => {
-    var text = input;
-    // replace numbers that have a book abbreviation before them
-    tunebooks.forEach((book) => {
-      if (book.id === tunebook) return; // we will handle the primary book later
-
-      const bookMap = book.data;
-
-      const regex = new RegExp(book.abbreviation + " " + "\\d+[tb]*", "g");
-
-      text = text.replace(regex, (match) => {
-        const pageNumber = match.replace(`${book.abbreviation} `, "");
-        // @ts-ignore
-        return bookMap[pageNumber] ? `${match} ${bookMap[pageNumber]}` : match;
-      });
-    });
-
-    // if there is no primary book, we're done
-    if (tunebook === "none") return text;
-
-    // if there is a primary book, replace numbers that have no abbreviation before them
-    const abbreviations = tunebooks
-      .map((book) => `${book.abbreviation} `)
-      .filter(Boolean); // `.filter(Boolean) removes falsy values
-    const pattern = `(?<!${abbreviations.join("|")}[0-9]*)\\d+[tb]*`;
-    const primaryBookRegex = new RegExp(pattern, "g");
-
-    const bookData = tunebooks.find((book) => book.id === tunebook);
-    if (!bookData) return text;
-    const bookMap = bookData.data;
-
-    text = text.replace(primaryBookRegex, (match) => {
-      // @ts-ignore
-      return bookMap[match] ? `${match} ${bookMap[match]}` : match;
-    });
-
-    return text;
-  };
-
-  const replaceNumbersFromPrimaryBook = () => {
-    if (!input) {
-      setOutput("");
-      return;
-    }
-
-    const bookData =
-      tunebooks.find((book) => book.id === tunebook) || tunebooks[0];
-    const bookMap = bookData.data;
-
-    return input.replace(/\d+[tb]*/g, (match) => {
-      // @ts-ignore
-      return bookMap[match] ? `${match} ${bookMap[match]}` : match;
-    });
-  };
-
   const replaceNumbersInText = () => {
     if (tunebook === "none" || isUsingMultipleBooks) {
-      setOutput(replaceNumbersFromAllBooks());
+      setOutput(replaceNumbersFromAllBooks(input, tunebook));
     } else {
-      setOutput(replaceNumbersFromPrimaryBook());
+      setOutput(replaceNumbersFromPrimaryBook(input, tunebook));
     }
   };
 
