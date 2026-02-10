@@ -27,6 +27,30 @@ const getTuneNameFromPageNumber = (
   return tuneName;
 };
 
+const getTuneNameAndNumber = (
+  number: string,
+  tunebook: Tunebook,
+  isPrimaryBook?: boolean,
+  isTopDefault?: boolean,
+  isPageBeforeBook?: boolean,
+) => {
+  const tuneName = getTuneNameFromPageNumber(number, tunebook, isTopDefault);
+
+  if (isPrimaryBook) {
+    return tuneName ? `${number} ${tuneName}` : `${number}`;
+  }
+
+  if (isPageBeforeBook) {
+    return tuneName
+      ? `${number} ${tunebook.suffix} ${tuneName}`
+      : `${number} ${tunebook.suffix}`;
+  } else {
+    return tuneName
+      ? `${tunebook.prefix} ${number} ${tuneName}`
+      : `${tunebook.prefix} ${number}`;
+  }
+};
+
 // find numbers
 // if the number has a tunebook abbreviation before it, replace it from that page in the book
 // if the number does not have a tunebook abbreviation before it, AND there is a primary book, replace the number with the page in the primary book
@@ -44,12 +68,7 @@ const replaceNumbersBookBeforePage = (
 
     text = text.replace(regex, (match) => {
       const pageNumber = match.replace(`${book.prefix} `, "").toLowerCase();
-      const tuneName = getTuneNameFromPageNumber(
-        pageNumber,
-        book,
-        isTopDefault,
-      );
-      return tuneName ? `${match} ${tuneName}` : match;
+      return getTuneNameAndNumber(pageNumber, book, false, isTopDefault, false);
     });
   });
 
@@ -67,8 +86,7 @@ const replaceNumbersBookBeforePage = (
   if (!bookData) return text;
 
   text = text.replace(primaryBookRegex, (match) => {
-    const tuneName = getTuneNameFromPageNumber(match, bookData, isTopDefault);
-    return tuneName ? `${match} ${tuneName}` : match;
+    return getTuneNameAndNumber(match, bookData, true, isTopDefault, false);
   });
 
   return text;
@@ -95,12 +113,7 @@ const replaceNumbersPageBeforeBook = (
 
     text = text.replace(regex, (match) => {
       const pageNumber = match.replace(` ${book.suffix}`, "");
-      const tuneName = getTuneNameFromPageNumber(
-        pageNumber,
-        book,
-        isTopDefault,
-      );
-      return tuneName ? `${match} ${tuneName}` : match;
+      return getTuneNameAndNumber(pageNumber, book, false, isTopDefault, true);
     });
   });
 
@@ -123,8 +136,7 @@ const replaceNumbersPageBeforeBook = (
   if (!bookData) return text;
 
   text = text.replace(primaryBookRegex, (match) => {
-    const tuneName = getTuneNameFromPageNumber(match, bookData, isTopDefault);
-    return tuneName ? `${match} ${tuneName}` : match;
+    return getTuneNameAndNumber(match, bookData, true, isTopDefault, true);
   });
 
   return text;
@@ -154,7 +166,6 @@ export const replaceNumbersFromPrimaryBook = (
     tunebooks.find((book) => book.id === primaryTunebook) || tunebooks[0];
 
   return text.replace(/\d+[tbTB]*/g, (match) => {
-    const tuneName = getTuneNameFromPageNumber(match, bookData, isTopDefault);
-    return tuneName ? `${match} ${tuneName}` : match;
+    return getTuneNameAndNumber(match, bookData, true, isTopDefault, false);
   });
 };

@@ -90,7 +90,7 @@ function App() {
 
         <label>
           Are top-piece songs not explicitly marked? (e.g. should we assume SH
-          "45" is New Britain?)
+          "45" is 45t New Britain?)
           <input
             type="checkbox"
             checked={isTopDefault}

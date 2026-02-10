@@ -71,12 +71,14 @@ Ernie: 168 Cowper`;
 459 (1991)
 522 (CB)
 213b
-213b (1991)`;
+213b (1991)
+60 (EH 1)`;
     const expectedOutput = `55t (EH 1) Nearer, My God, to Thee
 459 (1991) Tolling Bell
 522 (CB) Shades of Night
 213b Trembling Spirit
-213b (1991) Warning`;
+213b (1991) Warning
+60 (EH 1) Shades of Night`;
 
     expect(
       replaceNumbersFromAllBooks(input, "denson2025", false, true),
@@ -89,13 +91,15 @@ Ernie: 168 Cowper`;
 55 (EH 1)
 55t (EH 1)
 404 (ShH)
-404t (ShH)`;
+404t (ShH)
+60 (EH 1)`;
     const expectedOutput = `45 New Britain
 45t New Britain
 55 (EH 1) Nearer, My God, to Thee
 55t (EH 1) Nearer, My God, to Thee
 404 (ShH) Paradise
-404t (ShH) Paradise`;
+404t (ShH) Paradise
+60 (EH 1) Shades of Night`;
     expect(replaceNumbersFromAllBooks(input, "denson2025", true, true)).toEqual(
       expectedOutput,
     );
