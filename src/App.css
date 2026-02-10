@@ -64,3 +64,30 @@ code {
     margin-bottom: 1rem;
   }
 }
+
+.output {
+  white-space: pre-wrap;
+
+  .no-name {
+    color: #e18700;
+    border-bottom: 1px dashed #e18700;
+
+    &::after {
+      /* this inserts the "?" without it appearing when the user copies the text */
+      content: attr(data-comments);
+    }
+  }
+}
+
+.output,
+textarea {
+  width: 100%;
+  height: 248px;
+  border: 1px solid rgb(118, 118, 118);
+  border-radius: 2px;
+  font-family: monospace;
+  padding: 2px;
+  color: black;
+  resize: vertical;
+  overflow: auto;
+}

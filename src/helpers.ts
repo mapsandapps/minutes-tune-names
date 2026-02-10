@@ -1,5 +1,15 @@
 import { tunebooks, type Tunebook } from "./tunebooks.ts";
 
+interface PageNumber {
+  fromInput: string;
+  pageNumber: string;
+  lowerCaseNumber: string;
+  bookId: string;
+}
+
+const STRING_TO_REPLACE = "REPLACE_NUMBER_HERE_";
+const UNKNOWN_PAGE_STRING = "???";
+
 const getTuneNameFromPageNumber = (
   pageNumber: string,
   tunebook: Tunebook,
@@ -28,144 +38,202 @@ const getTuneNameFromPageNumber = (
 };
 
 const getTuneNameAndNumber = (
-  number: string,
-  tunebook: Tunebook,
-  isPrimaryBook?: boolean,
+  number: PageNumber,
+  primaryTunebook?: string,
   isTopDefault?: boolean,
   isPageBeforeBook?: boolean,
 ) => {
-  const tuneName = getTuneNameFromPageNumber(number, tunebook, isTopDefault);
+  const { fromInput, pageNumber, lowerCaseNumber, bookId } = number;
 
-  if (isPrimaryBook) {
-    return tuneName ? `${number} ${tuneName}` : `${number}`;
+  const tunebook = tunebooks.find((book) => book.id === bookId);
+  const thisIsPrimaryTunebook = primaryTunebook === number.bookId;
+
+  if (!tunebook) return "";
+
+  const tuneName = getTuneNameFromPageNumber(
+    lowerCaseNumber,
+    tunebook,
+    isTopDefault,
+  );
+
+  // tune name was not found, return "?"
+  if (!tuneName) {
+    if (isPageBeforeBook) {
+      if (thisIsPrimaryTunebook) {
+        return `${pageNumber}${UNKNOWN_PAGE_STRING}`;
+      }
+      return `${pageNumber}${UNKNOWN_PAGE_STRING} ${tunebook.suffix}`;
+    } else {
+      return `${fromInput}${UNKNOWN_PAGE_STRING}`;
+    }
+  }
+
+  if (thisIsPrimaryTunebook) {
+    return `${pageNumber} ${tuneName}`;
   }
 
   if (isPageBeforeBook) {
-    return tuneName
-      ? `${number} ${tunebook.suffix} ${tuneName}`
-      : `${number} ${tunebook.suffix}`;
+    return `${pageNumber} ${tunebook.suffix} ${tuneName}`;
   } else {
-    return tuneName
-      ? `${tunebook.prefix} ${number} ${tuneName}`
-      : `${tunebook.prefix} ${number}`;
+    return `${tunebook.prefix} ${pageNumber} ${tuneName}`;
   }
 };
 
-// find numbers
-// if the number has a tunebook abbreviation before it, replace it from that page in the book
-// if the number does not have a tunebook abbreviation before it, AND there is a primary book, replace the number with the page in the primary book
-// ignore all other numbers
-const replaceNumbersBookBeforePage = (
-  text: string,
-  primaryTunebook: string,
-  isTopDefault?: boolean,
-) => {
-  // replace numbers that have a book abbreviation before them
-  tunebooks.forEach((book) => {
-    if (book.id === primaryTunebook) return; // we will handle the primary book later
+const getNumbersFromTextOneBook = (text: string, primaryTunebook: string) => {
+  // if they're only using one book, any number is assumed to be a page number
 
-    const regex = new RegExp(book.prefix + " " + "\\d+[tbTB]*", "g");
+  const numbers: PageNumber[] = [];
 
-    text = text.replace(regex, (match) => {
-      const pageNumber = match.replace(`${book.prefix} `, "").toLowerCase();
-      return getTuneNameAndNumber(pageNumber, book, false, isTopDefault, false);
+  const textWithoutNumbers = text.replace(/\d+[tbTB]*/g, (match) => {
+    numbers.push({
+      fromInput: match,
+      pageNumber: match,
+      lowerCaseNumber: match.toLowerCase(),
+      bookId: primaryTunebook,
     });
+    return `${STRING_TO_REPLACE}${numbers.length - 1}`;
   });
 
-  // if there is no primary book, we're done
-  if (primaryTunebook === "none") return text;
-
-  // if there is a primary book, replace numbers that have no abbreviation before them
-  const abbreviations = tunebooks
-    .map((book) => `${book.prefix} `)
-    .filter(Boolean); // `.filter(Boolean) removes falsy values
-  const pattern = `(?<!${abbreviations.join("|")})\\b\\d+[tbTB]*\\b`;
-  const primaryBookRegex = new RegExp(pattern, "g");
-
-  const bookData = tunebooks.find((book) => book.id === primaryTunebook);
-  if (!bookData) return text;
-
-  text = text.replace(primaryBookRegex, (match) => {
-    return getTuneNameAndNumber(match, bookData, true, isTopDefault, false);
-  });
-
-  return text;
+  return { textWithoutNumbers, numbers };
 };
 
-// find numbers
-// if the number has a tunebook abbreviation before it, replace it from that page in the book
-// if the number does not have a tunebook abbreviation before it, AND there is a primary book, replace the number with the page in the primary book
-// ignore all other numbers
-const replaceNumbersPageBeforeBook = (
+const getNumbersFromTextAllBooks = (
   text: string,
   primaryTunebook: string,
-  isTopDefault?: boolean,
+  isPageBeforeBook?: boolean,
 ) => {
-  // replace numbers that have a book abbreviation before them
-  tunebooks.forEach((book) => {
-    if (book.id === primaryTunebook) return; // we will handle the primary book later
+  const numbers: PageNumber[] = [];
 
-    const escapedAbbreviation = book.suffix
-      ?.replace(/\(/, "\\(")
-      .replace(/\)/, "\\)");
+  var textWithoutNumbers = text;
 
-    const regex = new RegExp("\\d+[tbTB]*" + " " + escapedAbbreviation, "g");
+  if (isPageBeforeBook) {
+    // find numbers that have a book abbreviation after them
+    tunebooks.forEach((book) => {
+      if (book.id === primaryTunebook) return; // we will handle the primary book later
 
-    text = text.replace(regex, (match) => {
-      const pageNumber = match.replace(` ${book.suffix}`, "");
-      return getTuneNameAndNumber(pageNumber, book, false, isTopDefault, true);
+      const escapedAbbreviation = book.suffix
+        ?.replace(/\(/, "\\(")
+        .replace(/\)/, "\\)");
+
+      const regex = new RegExp(
+        "\\b\\d+[tbTB]*\\b" + " " + escapedAbbreviation,
+        "g",
+      );
+
+      textWithoutNumbers = textWithoutNumbers.replace(regex, (match) => {
+        const pageNumber = match.replace(` ${book.suffix}`, "");
+
+        numbers.push({
+          fromInput: match,
+          pageNumber,
+          lowerCaseNumber: pageNumber.toLowerCase(),
+          bookId: book.id,
+        });
+        return `${STRING_TO_REPLACE}${numbers.length - 1}`;
+      });
     });
-  });
+  } else {
+    // find numbers that have a book abbreviation before them
+    tunebooks.forEach((book) => {
+      if (book.id === primaryTunebook) return; // we will handle the primary book later
 
-  // if there is no primary book, we're done
-  if (primaryTunebook === "none") return text;
+      const regex = new RegExp(book.prefix + " " + "\\b\\d+[tbTB]*\\b", "g");
 
-  const abbreviations = tunebooks
-    .map((book) => ` ${book.suffix}`)
-    .filter(Boolean) // `.filter(Boolean) removes falsy values
-    .join("|");
+      textWithoutNumbers = textWithoutNumbers.replace(regex, (match) => {
+        const pageNumber = match.replace(`${book.prefix} `, "");
 
-  const escapedAbbreviations = abbreviations
-    .replace(/\(/g, "\\(")
-    .replace(/\)/g, "\\)");
-  const pattern = `(?<!\\d)\\b\\d+[tbTB]*\\b(?!(${escapedAbbreviations}))`;
+        numbers.push({
+          fromInput: match,
+          pageNumber,
+          lowerCaseNumber: pageNumber.toLowerCase(),
+          bookId: book.id,
+        });
+        return `${STRING_TO_REPLACE}${numbers.length - 1}`;
+      });
+    });
+  }
 
-  const primaryBookRegex = new RegExp(pattern, "g");
+  // now get numbers for primary tunebook
+  if (primaryTunebook !== "none") {
+    textWithoutNumbers = textWithoutNumbers.replace(
+      /\b\d+[tbTB]*\b/g,
+      (match) => {
+        numbers.push({
+          fromInput: match,
+          pageNumber: match,
+          lowerCaseNumber: match.toLowerCase(),
+          bookId: primaryTunebook,
+        });
+        return `${STRING_TO_REPLACE}${numbers.length - 1}`;
+      },
+    );
+  }
 
-  const bookData = tunebooks.find((book) => book.id === primaryTunebook);
-  if (!bookData) return text;
-
-  text = text.replace(primaryBookRegex, (match) => {
-    return getTuneNameAndNumber(match, bookData, true, isTopDefault, true);
-  });
-
-  return text;
+  return { textWithoutNumbers, numbers };
 };
 
-export const replaceNumbersFromAllBooks = (
+export const replaceNumbers = (
   text: string,
   primaryTunebook: string,
+  isUsingMultipleBooks?: boolean,
   isTopDefault?: boolean,
   isPageBeforeBook?: boolean,
 ) => {
-  return isPageBeforeBook
-    ? replaceNumbersPageBeforeBook(text, primaryTunebook, isTopDefault)
-    : replaceNumbersBookBeforePage(text, primaryTunebook, isTopDefault);
+  const isUsingOnlyOneBook =
+    !isUsingMultipleBooks && primaryTunebook !== "none";
+
+  const { textWithoutNumbers, numbers } = isUsingOnlyOneBook
+    ? getNumbersFromTextOneBook(text, primaryTunebook)
+    : getNumbersFromTextAllBooks(text, primaryTunebook, isPageBeforeBook);
+
+  var textWithNames = textWithoutNumbers;
+
+  numbers.forEach((number, i) => {
+    const nameAndNumber = getTuneNameAndNumber(
+      number,
+      primaryTunebook,
+      isTopDefault,
+      isPageBeforeBook,
+    );
+
+    textWithNames = textWithNames.replace(
+      `${STRING_TO_REPLACE}${i}`,
+      nameAndNumber,
+    );
+  });
+
+  return textWithNames;
 };
 
-export const replaceNumbersFromPrimaryBook = (
+export const replaceNumbersAndAddTooltips = (
   text: string,
   primaryTunebook: string,
+  isUsingMultipleBooks?: boolean,
   isTopDefault?: boolean,
+  isPageBeforeBook?: boolean,
+  shouldShowUnmatched?: boolean, // always true, for now
 ) => {
-  if (!text) return "";
+  const textWithNames = replaceNumbers(
+    text,
+    primaryTunebook,
+    isUsingMultipleBooks,
+    isTopDefault,
+    isPageBeforeBook,
+  );
 
-  if (!primaryTunebook) return text;
+  const escapedUnknownPageString = UNKNOWN_PAGE_STRING.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    "\\$&",
+  );
 
-  const bookData =
-    tunebooks.find((book) => book.id === primaryTunebook) || tunebooks[0];
+  if (shouldShowUnmatched) {
+    const regex = new RegExp(`\\b\\d+[tbTB]*${escapedUnknownPageString}`, "g");
 
-  return text.replace(/\d+[tbTB]*/g, (match) => {
-    return getTuneNameAndNumber(match, bookData, true, isTopDefault, false);
-  });
+    return textWithNames.replaceAll(regex, (match) => {
+      const number = match.replace(UNKNOWN_PAGE_STRING, "");
+      return `<span data-comments='?' title='Number not found in book(s)' class='no-name'>${number}</span>`;
+    });
+  } else {
+    return textWithNames.replaceAll(UNKNOWN_PAGE_STRING, "");
+  }
 };

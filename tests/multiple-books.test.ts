@@ -1,8 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  replaceNumbersFromAllBooks,
-  replaceNumbersFromPrimaryBook,
-} from "../src/helpers";
+import { replaceNumbers } from "../src/helpers";
 
 describe("multiple books", () => {
   test("EH sample", () => {
@@ -19,25 +16,21 @@ Andy: 345b I'm On My Journey Home; 442 New Jordan
 Shawn: 547 Granville; 546 My Brightest Days
 Ernie: 168 Cowper`;
 
-    expect(replaceNumbersFromAllBooks(input, "denson2025")).toEqual(
-      expectedOutput,
-    );
+    expect(replaceNumbers(input, "denson2025", true)).toEqual(expectedOutput);
   });
 
   test("Shenandoah - should not say 'Coop ShH 278 Stafford Hauff'", () => {
     const input = "Coop ShH 278";
     const expectedOutput = "Coop ShH 278 Hauff";
 
-    expect(replaceNumbersFromAllBooks(input, "denson2025")).toEqual(
-      expectedOutput,
-    );
+    expect(replaceNumbers(input, "denson2025", true)).toEqual(expectedOutput);
   });
 
   test("no primary book provided", () => {
     const input = "Coop ShH 278";
     const expectedOutput = "Coop ShH 278 Hauff";
 
-    expect(replaceNumbersFromAllBooks(input, "none")).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "none", true)).toEqual(expectedOutput);
   });
 
   test("book before page, bad input", () => {
@@ -46,24 +39,24 @@ Ernie: 168 Cowper`;
     const input = `55t (EH 1)
 459 (1991)
 522 (CB)`;
-    const expectedOutput = `55t (EH 1 Windgate)
-459 Hurricane Creek (1991)
+    const expectedOutput = `55t??? (EH 1 Windgate)
+459 Hurricane Creek (1991???)
 522 Ye Heedless Ones (CB)`;
 
-    expect(
-      replaceNumbersFromAllBooks(input, "denson2025", false, false),
-    ).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true, false, false)).toEqual(
+      expectedOutput,
+    );
   });
 
   test("page before book, bad input", () => {
     // written as book before page but "page before book" option is on
     // this output is not what the user expects, but is correct for their settings
     const input = "EH 55t";
-    const expectedOutput = "EH 55t";
+    const expectedOutput = "EH 55t???";
 
-    expect(
-      replaceNumbersFromAllBooks(input, "denson2025", false, true),
-    ).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true, false, true)).toEqual(
+      expectedOutput,
+    );
   });
 
   test("page before book, correct input", () => {
@@ -80,9 +73,9 @@ Ernie: 168 Cowper`;
 213b (1991) Warning
 60 (EH 1) Shades of Night`;
 
-    expect(
-      replaceNumbersFromAllBooks(input, "denson2025", false, true),
-    ).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true, false, true)).toEqual(
+      expectedOutput,
+    );
   });
 
   test("`isTopDefault` on, page before book", () => {
@@ -100,7 +93,7 @@ Ernie: 168 Cowper`;
 404 (ShH) Paradise
 404t (ShH) Paradise
 60 (EH 1) Shades of Night`;
-    expect(replaceNumbersFromAllBooks(input, "denson2025", true, true)).toEqual(
+    expect(replaceNumbers(input, "denson2025", true, true, true)).toEqual(
       expectedOutput,
     );
   });
@@ -112,15 +105,15 @@ Ernie: 168 Cowper`;
 55t (EH 1)
 404 (ShH)
 404t (ShH)`;
-    const expectedOutput = `45
+    const expectedOutput = `45???
 45t New Britain
-55 (EH 1)
+55??? (EH 1)
 55t (EH 1) Nearer, My God, to Thee
-404 (ShH)
+404??? (ShH)
 404t (ShH) Paradise`;
-    expect(
-      replaceNumbersFromAllBooks(input, "denson2025", false, true),
-    ).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true, false, true)).toEqual(
+      expectedOutput,
+    );
   });
 
   test("`isTopDefault` on, book before page", () => {
@@ -136,9 +129,9 @@ EH 55 Nearer, My God, to Thee
 EH 55t Nearer, My God, to Thee
 ShH 404 Paradise
 ShH 404t Paradise`;
-    expect(
-      replaceNumbersFromAllBooks(input, "denson2025", true, false),
-    ).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true, true, false)).toEqual(
+      expectedOutput,
+    );
   });
 
   test("`isTopDefault` off, book before page", () => {
@@ -148,14 +141,14 @@ EH 55
 EH 55t
 ShH 404
 ShH 404t`;
-    const expectedOutput = `45
+    const expectedOutput = `45???
 45t New Britain
-EH 55
+EH 55???
 EH 55t Nearer, My God, to Thee
-ShH 404
+ShH 404???
 ShH 404t Paradise`;
-    expect(
-      replaceNumbersFromAllBooks(input, "denson2025", false, false),
-    ).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true, false, false)).toEqual(
+      expectedOutput,
+    );
   });
 });

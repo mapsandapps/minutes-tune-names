@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
 import "./App.css";
 import { tunebooks } from "./tunebooks.ts";
 import Instructions from "./Instructions.tsx";
-import {
-  replaceNumbersFromAllBooks,
-  replaceNumbersFromPrimaryBook,
-} from "./helpers.ts";
+import { replaceNumbersAndAddTooltips } from "./helpers.ts";
 
 function App() {
   const [tunebook, setTunebook] = useState("denson2025"); // can be "none", as well as any tunebook from `tunebooks`
@@ -16,23 +14,17 @@ function App() {
   const [isTopDefault, setTopDefault] = useState<boolean>(false);
   const [bookPageOrder, setBookPageOrder] = useState("book-before-page");
 
-  const replaceNumbersInText = () => {
-    if (tunebook === "none" || isUsingMultipleBooks) {
-      setOutput(
-        replaceNumbersFromAllBooks(
-          input,
-          tunebook,
-          isTopDefault,
-          bookPageOrder === "page-before-book",
-        ),
-      );
-    } else {
-      setOutput(replaceNumbersFromPrimaryBook(input, tunebook, isTopDefault));
-    }
-  };
-
   useEffect(() => {
-    replaceNumbersInText();
+    setOutput(
+      replaceNumbersAndAddTooltips(
+        input,
+        tunebook,
+        isUsingMultipleBooks,
+        isTopDefault,
+        bookPageOrder === "page-before-book",
+        true,
+      ),
+    );
   }, [bookPageOrder, input, isTopDefault, isUsingMultipleBooks, tunebook]);
 
   return (
@@ -110,13 +102,10 @@ function App() {
       </label>
       <label>
         Output:
-        <textarea
-          value={output}
-          disabled
-          rows={16}
-          cols={64}
-          placeholder="Your minutes will appear here with tune names added"
-        />
+        <div
+          className="output"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output || "") }}
+        ></div>
       </label>
     </>
   );
