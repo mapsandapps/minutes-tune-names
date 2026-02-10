@@ -1,4 +1,4 @@
-import { type MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
 import "./App.css";
 import { tunebooks } from "./tunebooks.ts";
