@@ -13,6 +13,7 @@ function App() {
     useState<boolean>(false);
   const [isTopDefault, setTopDefault] = useState<boolean>(false);
   const [bookPageOrder, setBookPageOrder] = useState("book-before-page");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setOutput(
@@ -26,6 +27,28 @@ function App() {
       ),
     );
   }, [bookPageOrder, input, isTopDefault, isUsingMultipleBooks, tunebook]);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => {
+      setCopied(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  const copyToClipboard = () => {
+    var copyText = document.getElementsByClassName("output")[0].textContent;
+
+    navigator.clipboard
+      .writeText(copyText)
+      .then(() => {
+        setCopied(true);
+      })
+      .catch((err) => {
+        console.error("Could not copy text: ", err);
+      });
+  };
 
   return (
     <>
@@ -101,7 +124,14 @@ function App() {
         />
       </label>
       <label>
-        Output:
+        <div className="output-label">
+          Output:
+          {output && (
+            <button onClick={copyToClipboard}>
+              {copied ? "Copied ✅" : "Copy to clipboard"}
+            </button>
+          )}
+        </div>
         <div
           className="output"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output || "") }}

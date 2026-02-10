@@ -91,3 +91,14 @@ textarea {
   resize: vertical;
   overflow: auto;
 }
+
+.output-label {
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    min-width: 120px;
+    min-height: 16px;
+    line-height: 16px;
+  }
+}
