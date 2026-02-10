@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import DOMPurify from "dompurify";
 import "./App.css";
 import { tunebooks } from "./tunebooks.ts";
@@ -123,7 +123,7 @@ function App() {
           cols={64}
         />
       </label>
-      <label>
+      <div>
         <div className="output-label">
           Output:
           {output && (
@@ -136,7 +136,7 @@ function App() {
           className="output"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output || "") }}
         ></div>
-      </label>
+      </div>
     </>
   );
 }

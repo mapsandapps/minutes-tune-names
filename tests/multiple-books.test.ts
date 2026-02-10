@@ -151,4 +151,90 @@ ShH 404t Paradise`;
       expectedOutput,
     );
   });
+
+  test("> 10 replacements", () => {
+    const input = `Our extra special guest made for an extra special singing ❤️
+Esther 49t
+Piper 178t
+Shawn 537
+David 536
+Andy 471
+Jim 223
+Zane 102
+Coop ShH 200
+Delaney 86
+Maygan 162
+Lily 278
+Esther 362
+Piper 34b
+Shawn 240
+Andy 423b
+David 364
+Jim 179
+Zane 49b
+Coop ShH 278
+Delaney 47b
+Maygan 39t
+Lily 513
+Esther 368
+Piper 68b
+Shawn 545
+David 444
+Andy 483
+Jose 403
+Jim 130
+Coop ShH 288t
+Lily 312b
+Maygan 448b
+Esther 524
+Piper 168
+David 356
+Zane 55
+Andy 255
+Lily 442
+Closer - 347t`;
+    const expectedOutput = `Our extra special guest made for an extra special singing ❤️
+Esther 49t Old Hundred
+Piper 178t Africa
+Shawn 537 Portsmouth
+David 536 Sweet Majesty
+Andy 471 Becket
+Jim 223 Balm in Gilead
+Zane 102 Fulfillment
+Coop ShH 200 Attention
+Delaney 86 Poland
+Maygan 162 Plenary
+Lily 278???
+Esther 362 Norwich
+Piper 34b St. Thomas
+Shawn 240 Christian Song
+Andy 423b Hall
+David 364 Southwell
+Jim 179 The Christian Warfare
+Zane 49b Mear
+Coop ShH 278 Hauff
+Delaney 47b Idumea
+Maygan 39t Detroit
+Lily 513 Oakland
+Esther 368 Stony Point
+Piper 68b Ortonville
+Shawn 545 Somers
+David 444 All Saints New
+Andy 483 Golden Gardens
+Jose 403 Heavenly Rest
+Jim 130 The Old Graveyard
+Coop ShH 288t Savannah
+Lily 312b Restoration
+Maygan 448b The Grieved Soul
+Esther 524 Moonlight
+Piper 168 Cowper
+David 356 Boundless Grace
+Zane 55 Converse
+Andy 255 Mechanicville
+Lily 442 New Jordan
+Closer - 347t Christian's Farewell`;
+    expect(replaceNumbers(input, "denson2025", true, false, false)).toEqual(
+      expectedOutput,
+    );
+  });
 });

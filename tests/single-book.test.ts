@@ -50,4 +50,13 @@ Maygan 39T Detroit`;
       "45t New Britain",
     );
   });
+
+  test("time should not get replaced", () => {
+    expect(
+      replaceNumbers(
+        "Wesley Teaching Chapel at Emory University, 10am",
+        "denson2025",
+      ),
+    ).toEqual("Wesley Teaching Chapel at Emory University, 10???am");
+  });
 });

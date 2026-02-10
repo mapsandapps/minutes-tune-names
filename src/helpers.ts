@@ -196,10 +196,16 @@ export const replaceNumbers = (
       isPageBeforeBook,
     );
 
-    textWithNames = textWithNames.replace(
-      `${STRING_TO_REPLACE}${i}`,
-      nameAndNumber,
-    );
+    const regex = new RegExp(STRING_TO_REPLACE + i + "(?!\\d)", "i");
+
+    textWithNames = textWithNames.replace(regex, nameAndNumber);
+  });
+
+  // check if any STRING_TO_REPLACEs are left (they shouldn't be, but just in case)
+  const regex = new RegExp(STRING_TO_REPLACE + "[0-9]*", "g");
+  textWithNames = textWithNames.replaceAll(regex, (match) => {
+    console.warn(`${STRING_TO_REPLACE} found! ${match}`);
+    return "";
   });
 
   return textWithNames;
