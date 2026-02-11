@@ -61,6 +61,11 @@ export default function Instructions() {
           on "February 26" will end up being your singing on "February 26
           Samaria". 😉
         </li>
+        <li>
+          Want more books to be included? Send a list of page numbers and tune
+          names for additional books to shawn -at- mapsandapps -dot- net and I
+          will be happy to add them. Any editable text format is fine.
+        </li>
       </ul>
     </details>
   );

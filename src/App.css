@@ -9,6 +9,10 @@ body {
   padding: 16px;
 }
 
+h1 {
+  margin-top: 0;
+}
+
 select,
 label,
 textarea {
@@ -67,6 +71,11 @@ code {
 
 .output {
   white-space: pre-wrap;
+  background-color: rgba(239, 239, 239, 0.3);
+
+  &.placeholder {
+    color: gray;
+  }
 
   .no-name {
     color: #e18700;

@@ -52,6 +52,7 @@ function App() {
 
   return (
     <>
+      <h1>Minutes Tune Name Inserter</h1>
       <label>
         The primary book of the singing:
         <select value={tunebook} onChange={(e) => setTunebook(e.target.value)}>
@@ -133,8 +134,12 @@ function App() {
           )}
         </div>
         <div
-          className="output"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output || "") }}
+          className={`output ${!output && "placeholder"}`}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(
+              output || "Your minutes will appear here with tune names added",
+            ),
+          }}
         ></div>
       </div>
     </>
