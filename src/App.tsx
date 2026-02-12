@@ -14,6 +14,14 @@ function App() {
   const [isTopDefault, setTopDefault] = useState<boolean>(false);
   const [bookPageOrder, setBookPageOrder] = useState("book-before-page");
   const [copied, setCopied] = useState(false);
+  const [isShowingAdvancedSettings, showAdvancedSettings] = useState(false);
+
+  // only show advanced settings via browser console
+  // type `showAdvancedSettings(true)` in the console to show
+  useEffect(() => {
+    // @ts-ignore
+    window.showAdvancedSettings = showAdvancedSettings;
+  }, [showAdvancedSettings]);
 
   useEffect(() => {
     setOutput(
@@ -101,19 +109,23 @@ function App() {
           <Instructions />
         </>
       )}
-      <details className="advanced-settings">
-        <summary>Advanced settings</summary>
+      {isShowingAdvancedSettings && (
+        // NOTE: now only available via the browser console
+        // type `showAdvancedSettings(true)` in the console to show
+        <details className="advanced-settings">
+          <summary>Advanced settings</summary>
 
-        <label>
-          Are top-piece songs not explicitly marked? (e.g. should we assume SH
-          "45" is 45t New Britain?)
-          <input
-            type="checkbox"
-            checked={isTopDefault}
-            onChange={(e) => setTopDefault(e.target.checked)}
-          />
-        </label>
-      </details>
+          <label>
+            Are top-piece songs not explicitly marked? (e.g. should we assume SH
+            "45" is 45t New Britain?)
+            <input
+              type="checkbox"
+              checked={isTopDefault}
+              onChange={(e) => setTopDefault(e.target.checked)}
+            />
+          </label>
+        </details>
+      )}
       <label>
         Input:
         <textarea
