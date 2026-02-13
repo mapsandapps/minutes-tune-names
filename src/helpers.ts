@@ -106,7 +106,7 @@ const getRegexMultipleBooks = (
 
     return new RegExp(baseRegex + " " + escapedAbbreviation, "g");
   } else {
-    return new RegExp(book.prefix + " " + baseRegex, "g");
+    return new RegExp("\\b" + book.prefix + "\\b" + " " + baseRegex, "g");
   }
 };
 
