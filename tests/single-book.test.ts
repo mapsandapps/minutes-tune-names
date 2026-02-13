@@ -9,6 +9,7 @@ David B. taught a beginner's lesson, and we sang 70t.`;
 David B. taught a beginner's lesson, and we sang 70t Gainsville.`;
 
     expect(replaceNumbers(input, "denson2025")).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true)).toEqual(expectedOutput);
   });
 
   test("bad input", () => {
@@ -18,12 +19,17 @@ David B. taught a beginner's lesson, and we sang 70t Gainsville.`;
 EH 55t
 459 (1991)
 522 (CB)`;
-    const expectedOutput = `55t??? (EH 1???)
+    const badOutput = `55t??? (EH 1???)
 EH 55t???
 459 Hurricane Creek (1991???)
 522 Ye Heedless Ones (CB)`;
+    const worseOutput = `55t??? (EH 1 Windgate)
+EH 55t Nearer, My God, to Thee
+459 Hurricane Creek (1991???)
+522 Ye Heedless Ones (CB)`;
 
-    expect(replaceNumbers(input, "denson2025")).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025")).toEqual(badOutput);
+    expect(replaceNumbers(input, "denson2025", true)).toEqual(worseOutput);
   });
 
   test("capital T or B", () => {
@@ -33,6 +39,7 @@ Maygan 39T`;
 Maygan 39T Detroit`;
 
     expect(replaceNumbers(input, "denson2025")).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "denson2025", true)).toEqual(expectedOutput);
   });
 
   test("`isTopDefault` on", () => {
@@ -42,11 +49,21 @@ Maygan 39T Detroit`;
     expect(replaceNumbers("45t", "denson2025", false, true)).toEqual(
       "45t New Britain",
     );
+    expect(replaceNumbers("45", "denson2025", true, true)).toEqual(
+      "45 New Britain",
+    );
+    expect(replaceNumbers("45t", "denson2025", true, true)).toEqual(
+      "45t New Britain",
+    );
   });
 
   test("`isTopDefault` off", () => {
     expect(replaceNumbers("45", "denson2025", false, false)).toEqual("45???");
     expect(replaceNumbers("45t", "denson2025", false, false)).toEqual(
+      "45t New Britain",
+    );
+    expect(replaceNumbers("45", "denson2025", true, false)).toEqual("45???");
+    expect(replaceNumbers("45t", "denson2025", true, false)).toEqual(
       "45t New Britain",
     );
   });
@@ -58,5 +75,12 @@ Maygan 39T Detroit`;
         "denson2025",
       ),
     ).toEqual("Wesley Teaching Chapel at Emory University, 10???am");
+    expect(
+      replaceNumbers(
+        "Wesley Teaching Chapel at Emory University, 10am",
+        "denson2025",
+        true,
+      ),
+    ).toEqual("Wesley Teaching Chapel at Emory University, 10am");
   });
 });
