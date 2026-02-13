@@ -286,4 +286,80 @@ Shawn Taylor SSDept 24 (WB) Fairy Moonlight`;
       expectedOutput,
     );
   });
+
+  test("many books, book before page", () => {
+    const input = `
+SH 58
+WB 58
+CH 88
+CB 58
+VPH 341
+SoH 80
+HS 300
+GH 58
+EH 58
+ShH 58
+NHC 58t
+NHC A 58
+MH 58
+SoH 58`;
+    const expectedOutput = `
+SH 58 Pisgah
+WB 58 Pisgah
+CH 88 Pisgah
+CB 58 Pisgah
+VPH 341 Pisgah
+SoH 80 Pisgah
+HS 300 Pisgah
+GH 58 Behold!
+EH 58 Cleansing Fountain
+ShH 58 Saint's Repose
+NHC 58t Lanesboro
+NHC A 58 Emerald Gates
+MH 58 Winchester
+SoH 58 Consolation New`;
+
+    expect(replaceNumbers(input, "none", true, false, false)).toEqual(
+      expectedOutput,
+    );
+  });
+
+  test("many books, page before book", () => {
+    const input = `
+58 (2025)
+58 (1991)
+58 (WB)
+88 (CH)
+58 (CB)
+341 (VPH)
+80 (SoH)
+300 (HS)
+58 (GH)
+58 (EH 1)
+58 (ShH)
+58t (NHC)
+A 58 (NHC)
+58 (MH)
+58 (SoH)`;
+    const expectedOutput = `
+58 (2025) Pisgah
+58 (1991) Pisgah
+58 (WB) Pisgah
+88 (CH) Pisgah
+58 (CB) Pisgah
+341 (VPH) Pisgah
+80 (SoH) Pisgah
+300 (HS) Pisgah
+58 (GH) Behold!
+58 (EH 1) Cleansing Fountain
+58 (ShH) Saint's Repose
+58t (NHC) Lanesboro
+A 58 (NHC) Emerald Gates
+58 (MH) Winchester
+58 (SoH) Consolation New`;
+
+    expect(replaceNumbers(input, "none", true, false, true)).toEqual(
+      expectedOutput,
+    );
+  });
 });
