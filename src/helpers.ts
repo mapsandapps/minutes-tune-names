@@ -233,7 +233,7 @@ export const replaceNumbersAndAddTooltips = (
   );
 
   if (shouldShowUnmatched) {
-    const regex = new RegExp(`\\b\\d+[tbTB]*${escapedUnknownPageString}`, "g");
+    const regex = new RegExp(`\\b\\d*[tbTB]*${escapedUnknownPageString}`, "g");
 
     return textWithNames.replaceAll(regex, (match) => {
       const number = match.replace(UNKNOWN_PAGE_STRING, "");
