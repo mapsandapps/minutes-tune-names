@@ -302,7 +302,8 @@ ShH 58
 NHC 58t
 NHC A 58
 MH 58
-SoH 58`;
+SoH 58
+CSH 58`;
     const expectedOutput = `
 SH 58 Pisgah
 WB 58 Pisgah
@@ -317,7 +318,8 @@ ShH 58 Saint's Repose
 NHC 58t Lanesboro
 NHC A 58 Emerald Gates
 MH 58 Winchester
-SoH 58 Consolation New`;
+SoH 58 Consolation New
+CSH 58 Jesus Saves`;
 
     expect(replaceNumbers(input, "none", true, false, false)).toEqual(
       expectedOutput,
@@ -340,7 +342,8 @@ SoH 58 Consolation New`;
 58t (NHC)
 A 58 (NHC)
 58 (MH)
-58 (SoH)`;
+58 (SoH)
+58 (CSH)`;
     const expectedOutput = `
 58 (2025) Pisgah
 58 (1991) Pisgah
@@ -356,7 +359,8 @@ A 58 (NHC)
 58t (NHC) Lanesboro
 A 58 (NHC) Emerald Gates
 58 (MH) Winchester
-58 (SoH) Consolation New`;
+58 (SoH) Consolation New
+58 (CSH) Jesus Saves`;
 
     expect(replaceNumbers(input, "none", true, false, true)).toEqual(
       expectedOutput,
