@@ -16,6 +16,9 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [isShowingAdvancedSettings, showAdvancedSettings] = useState(false);
 
+  const fourShapeBooks = tunebooks.filter((book) => book.numberOfShapes === 4);
+  const sevenShapeBooks = tunebooks.filter((book) => book.numberOfShapes === 7);
+
   // only show advanced settings via browser console
   // type `showAdvancedSettings(true)` in the console to show
   useEffect(() => {
@@ -64,11 +67,20 @@ function App() {
       <label>
         The primary book of the singing:
         <select value={tunebook} onChange={(e) => setTunebook(e.target.value)}>
-          {tunebooks.map((book) => (
-            <option key={book.id} value={book.id}>
-              {book.name}
-            </option>
-          ))}
+          <optgroup label="Four shapes">
+            {fourShapeBooks.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.name}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Seven shapes">
+            {sevenShapeBooks.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.name}
+              </option>
+            ))}
+          </optgroup>
           <option value="none">None</option>
         </select>
       </label>

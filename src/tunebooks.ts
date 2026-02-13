@@ -4,6 +4,7 @@ export interface Tunebook {
   data: { [key: string]: string };
   prefix?: string;
   suffix: string;
+  numberOfShapes: number;
 }
 
 const denson2025 = {
@@ -5567,12 +5568,14 @@ export const tunebooks: Tunebook[] = [
     data: denson2025,
     prefix: "SH",
     suffix: "(2025)",
+    numberOfShapes: 4,
   },
   {
     name: "1991 Sacred Harp",
     id: "denson1991",
     data: denson1991,
     suffix: "(1991)",
+    numberOfShapes: 4,
   },
   {
     name: "Colored Sacred Harp",
@@ -5580,6 +5583,7 @@ export const tunebooks: Tunebook[] = [
     data: csh,
     prefix: "CSH",
     suffix: "(CSH)",
+    numberOfShapes: 4,
   },
   {
     name: "Cooper Book",
@@ -5587,6 +5591,7 @@ export const tunebooks: Tunebook[] = [
     data: cooper,
     prefix: "CB",
     suffix: "(CB)",
+    numberOfShapes: 4,
   },
   {
     name: "Eclectic Harmony",
@@ -5594,6 +5599,7 @@ export const tunebooks: Tunebook[] = [
     data: eh,
     prefix: "EH",
     suffix: "(EH 1)",
+    numberOfShapes: 4,
   },
   {
     name: "Georgian Harmony",
@@ -5601,6 +5607,7 @@ export const tunebooks: Tunebook[] = [
     data: gh,
     prefix: "GH",
     suffix: "(GH)",
+    numberOfShapes: 4,
   },
   {
     name: "Missouri Harmony",
@@ -5608,6 +5615,7 @@ export const tunebooks: Tunebook[] = [
     data: mh,
     prefix: "MH",
     suffix: "(MH)",
+    numberOfShapes: 4,
   },
   {
     name: "Shenandoah Harmony",
@@ -5615,6 +5623,7 @@ export const tunebooks: Tunebook[] = [
     data: shenandoah,
     prefix: "ShH",
     suffix: "(ShH)",
+    numberOfShapes: 4,
   },
   {
     name: "Southern Harmony",
@@ -5622,6 +5631,7 @@ export const tunebooks: Tunebook[] = [
     data: soh,
     prefix: "SoH",
     suffix: "(SoH)",
+    numberOfShapes: 4,
   },
   {
     name: "Valley Pocket Harmonist",
@@ -5629,6 +5639,7 @@ export const tunebooks: Tunebook[] = [
     data: vph,
     prefix: "VPH",
     suffix: "(VPH)",
+    numberOfShapes: 4,
   },
   {
     name: "White Book",
@@ -5636,6 +5647,7 @@ export const tunebooks: Tunebook[] = [
     data: wb,
     prefix: "WB",
     suffix: "(WB)",
+    numberOfShapes: 4,
   },
   // 7-shape below
   {
@@ -5644,6 +5656,7 @@ export const tunebooks: Tunebook[] = [
     data: ch,
     prefix: "CH",
     suffix: "(CH)",
+    numberOfShapes: 7,
   },
   {
     name: "Harmonia Sacra",
@@ -5651,6 +5664,7 @@ export const tunebooks: Tunebook[] = [
     data: hs,
     prefix: "HS",
     suffix: "(HS)",
+    numberOfShapes: 7,
   },
   {
     name: "New Harp of Columbia",
@@ -5658,5 +5672,6 @@ export const tunebooks: Tunebook[] = [
     data: nhc,
     prefix: "NHC",
     suffix: "(NHC)",
+    numberOfShapes: 7,
   },
 ];
