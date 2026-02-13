@@ -237,4 +237,53 @@ Closer - 347t Christian's Farewell`;
       expectedOutput,
     );
   });
+
+  test("NHC appendix", () => {
+    const input = `
+NHC 74 - Judy Mincey (for Robin Goddard)
+NHC A74 - Holly Springs Springs
+NHC A 74 - Holly Springs Springs`;
+    const expectedOutput = `
+NHC 74 Never Part Again - Judy Mincey (for Robin Goddard)
+NHC A74 Davisson's Retirement - Holly Springs Springs
+NHC A 74 Davisson's Retirement - Holly Springs Springs`;
+    expect(replaceNumbers(input, "ch", true, false, false)).toEqual(
+      expectedOutput,
+    );
+  });
+
+  test("NHC appendix, page before book", () => {
+    const input = `
+74 (NHC) - Judy Mincey (for Robin Goddard)
+A74 (NHC) - Holly Springs Springs
+A 74 (NHC) - Holly Springs Springs`;
+    const expectedOutput = `
+74 (NHC) Never Part Again - Judy Mincey (for Robin Goddard)
+A74 (NHC) Davisson's Retirement - Holly Springs Springs
+A 74 (NHC) Davisson's Retirement - Holly Springs Springs`;
+    expect(replaceNumbers(input, "ch", true, false, true)).toEqual(
+      expectedOutput,
+    );
+  });
+
+  // this case hasn't been addressed yet
+  test.skip("White Book Singing School Supplement", () => {
+    const input = `
+Shawn Taylor WB SSDept 24`;
+    const expectedOutput = `
+Shawn Taylor WB SSDept 24 Fairy Moonlight`;
+
+    expect(replaceNumbers(input, "ch", true, false)).toEqual(expectedOutput);
+  });
+
+  test("White Book Singing School Supplement, page before book", () => {
+    const input = `
+Shawn Taylor SSDept 24 (WB)`;
+    const expectedOutput = `
+Shawn Taylor SSDept 24 (WB) Fairy Moonlight`;
+
+    expect(replaceNumbers(input, "ch", true, false, true)).toEqual(
+      expectedOutput,
+    );
+  });
 });

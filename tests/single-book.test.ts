@@ -83,4 +83,28 @@ Maygan 39T Detroit`;
       ),
     ).toEqual("Wesley Teaching Chapel at Emory University, 10am");
   });
+
+  test("NHC appendix", () => {
+    const input = `
+74 - Judy Mincey (for Robin Goddard)
+A74 - Holly Springs Springs
+A 74 - Holly Springs Springs`;
+    const expectedOutput = `
+74 Never Part Again - Judy Mincey (for Robin Goddard)
+A74 Davisson's Retirement - Holly Springs Springs
+A 74 Davisson's Retirement - Holly Springs Springs`;
+
+    expect(replaceNumbers(input, "nhc")).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "nhc", true)).toEqual(expectedOutput);
+  });
+
+  test("White Book Singing School Supplement", () => {
+    const input = `
+Shawn Taylor SSDept 24`;
+    const expectedOutput = `
+Shawn Taylor SSDept 24 Fairy Moonlight`;
+
+    expect(replaceNumbers(input, "wb")).toEqual(expectedOutput);
+    expect(replaceNumbers(input, "wb", true)).toEqual(expectedOutput);
+  });
 });

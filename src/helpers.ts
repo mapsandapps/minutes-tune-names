@@ -79,12 +79,45 @@ const getTuneNameAndNumber = (
   }
 };
 
+const getRegexOneBook = (bookId: string): RegExp => {
+  if (bookId === "nhc") {
+    return new RegExp(/[A *]*\d+[tbTB]*/, "g");
+  }
+
+  return new RegExp(/\d+[tbTB]*/, "g");
+};
+
+const getRegexMultipleBooks = (
+  isPrimaryTunebook: boolean,
+  book: Tunebook,
+  isPageBeforeBook?: boolean,
+): RegExp => {
+  const baseRegex =
+    book.id === "nhc" ? "\\b[A *]*\\d+[tbTB]*\\b" : "\\b\\d+[tbTB]*\\b";
+
+  if (isPrimaryTunebook) {
+    return new RegExp(baseRegex, "g");
+  }
+
+  if (isPageBeforeBook) {
+    const escapedAbbreviation = book.suffix
+      ?.replace(/\(/, "\\(")
+      .replace(/\)/, "\\)");
+
+    return new RegExp(baseRegex + " " + escapedAbbreviation, "g");
+  } else {
+    return new RegExp(book.prefix + " " + baseRegex, "g");
+  }
+};
+
 const getNumbersFromTextOneBook = (text: string, primaryTunebook: string) => {
   // if they're only using one book, any number is assumed to be a page number
 
   const numbers: PageNumber[] = [];
 
-  const textWithoutNumbers = text.replace(/\d+[tbTB]*/g, (match) => {
+  const regex = getRegexOneBook(primaryTunebook);
+
+  const textWithoutNumbers = text.replace(regex, (match) => {
     numbers.push({
       fromInput: match,
       pageNumber: match,
@@ -111,14 +144,7 @@ const getNumbersFromTextAllBooks = (
     tunebooks.forEach((book) => {
       if (book.id === primaryTunebook) return; // we will handle the primary book later
 
-      const escapedAbbreviation = book.suffix
-        ?.replace(/\(/, "\\(")
-        .replace(/\)/, "\\)");
-
-      const regex = new RegExp(
-        "\\b\\d+[tbTB]*\\b" + " " + escapedAbbreviation,
-        "g",
-      );
+      const regex = getRegexMultipleBooks(false, book, true);
 
       textWithoutNumbers = textWithoutNumbers.replace(regex, (match) => {
         const pageNumber = match.replace(` ${book.suffix}`, "");
@@ -137,7 +163,7 @@ const getNumbersFromTextAllBooks = (
     tunebooks.forEach((book) => {
       if (book.id === primaryTunebook) return; // we will handle the primary book later
 
-      const regex = new RegExp(book.prefix + " " + "\\b\\d+[tbTB]*\\b", "g");
+      const regex = getRegexMultipleBooks(false, book, false);
 
       textWithoutNumbers = textWithoutNumbers.replace(regex, (match) => {
         const pageNumber = match.replace(`${book.prefix} `, "");
@@ -155,18 +181,22 @@ const getNumbersFromTextAllBooks = (
 
   // now get numbers for primary tunebook
   if (primaryTunebook !== "none") {
-    textWithoutNumbers = textWithoutNumbers.replace(
-      /\b\d+[tbTB]*\b/g,
-      (match) => {
-        numbers.push({
-          fromInput: match,
-          pageNumber: match,
-          lowerCaseNumber: match.toLowerCase(),
-          bookId: primaryTunebook,
-        });
-        return `${STRING_TO_REPLACE}${numbers.length - 1}`;
-      },
-    );
+    const tunebook = tunebooks.find((book) => book.id === primaryTunebook);
+
+    if (!tunebook) {
+      console.error("no tunebook found");
+    }
+
+    const regex = getRegexMultipleBooks(true, tunebook!);
+    textWithoutNumbers = textWithoutNumbers.replace(regex, (match) => {
+      numbers.push({
+        fromInput: match,
+        pageNumber: match,
+        lowerCaseNumber: match.toLowerCase(),
+        bookId: primaryTunebook,
+      });
+      return `${STRING_TO_REPLACE}${numbers.length - 1}`;
+    });
   }
 
   return { textWithoutNumbers, numbers };
