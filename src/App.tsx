@@ -4,6 +4,7 @@ import "./App.css";
 import { tunebooks } from "./tunebooks.ts";
 import Instructions from "./Instructions.tsx";
 import { replaceNumbersAndAddTooltips } from "./helpers.ts";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [tunebook, setTunebook] = useState("denson2025"); // can be "none", as well as any tunebook from `tunebooks`
@@ -166,6 +167,7 @@ function App() {
           }}
         ></div>
       </div>
+      <Analytics />
     </>
   );
 }
