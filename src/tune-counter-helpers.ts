@@ -1,4 +1,4 @@
-import { tunebooks } from "./tunebooks";
+import { pages19912025 } from "./pages-1991-2025";
 
 interface Page {
   pageNumber: string;
@@ -16,21 +16,11 @@ const getFormattedText = (allPages: Page[]) => {
 };
 
 const sortFn = (a: string, b: string) => {
-  const isATop = a.at(-1) === "t";
-  const isABottom = a.at(-1) === "b";
-  const isAFullPage = !isATop && !isABottom;
-  const aNumber = Number(a.replace(/[a-zA-Z]$/, ""));
-  const isBTop = b.at(-1) === "t";
-  const isBBottom = b.at(-1) === "b";
-  const isBFullPage = !isBTop && !isBBottom;
-  const bNumber = Number(b.replace(/[a-zA-Z]$/, ""));
+  const aPage = a.replace("-1991", "");
+  const aNumber = Number(aPage.replace(/[a-zA-Z]$/, ""));
 
-  // we can potentially have top, bottom, and full page, since we're combining books
-  if (aNumber === bNumber) {
-    if (isAFullPage) return -1;
-    if (isBFullPage) return 1;
-    return isATop ? -1 : 1;
-  }
+  const bPage = b.replace("-1991", "");
+  const bNumber = Number(bPage.replace(/[a-zA-Z]$/, ""));
 
   return aNumber - bNumber;
 };
@@ -39,24 +29,18 @@ const sortPageNumbers = (pageNumbers: string[]) => {
   return pageNumbers.sort(sortFn);
 };
 
-const getPageNumbers = (bookId: string): string[] => {
-  const denson1991 = tunebooks.find((book) => book.id === "denson1991");
-  const denson2025 = tunebooks.find((book) => book.id === "denson2025");
+const getPageNumbers = (isShowing91: boolean): string[] => {
+  const allPageNumbers = Object.keys(pages19912025);
 
-  var keys: string[] = [];
+  if (isShowing91) return allPageNumbers;
 
-  if (bookId === "denson1991" || bookId === "both") {
-    keys = [...keys, ...Object.keys(denson1991?.data || [])];
-  }
-  if (bookId === "denson2025" || bookId === "both") {
-    keys = [...keys, ...Object.keys(denson2025?.data || [])];
-  }
-
-  return [...new Set(keys)];
+  return allPageNumbers.filter(
+    (pageNumber) => pageNumber.slice(-5) !== "-1991",
+  );
 };
 
-export const countPageNumbers = (input: string, bookId: string) => {
-  const pageNumbers = sortPageNumbers(getPageNumbers(bookId));
+export const countPageNumbers = (input: string, isShowing91: boolean) => {
+  const pageNumbers = sortPageNumbers(getPageNumbers(isShowing91));
 
   if (!pageNumbers || pageNumbers.length < 1) {
     console.error("page numbers not found");
@@ -66,15 +50,25 @@ export const countPageNumbers = (input: string, bookId: string) => {
   const allPages: Page[] = [];
 
   pageNumbers.forEach((pageNumber) => {
-    const years =
-      bookId === "both" ? ["1991", "2025"] : [bookId.replace("denson", "")];
-    const regex = new RegExp(
-      "\\[" + pageNumber + "-" + years.join("|") + "\\]",
-      "g",
-    );
-    const matches = input.match(regex);
+    // @ts-ignore
+    const pagesInBooks = pages19912025[pageNumber] as string[];
 
-    allPages.push({ pageNumber, count: matches ? matches.length : 0 });
+    if (!pagesInBooks) return;
+
+    var count = 0;
+
+    pagesInBooks.forEach((bookPage) => {
+      const escapedBookPage = bookPage
+        .replace(/\[/, "\\[")
+        .replace(/\]/, "\\]");
+      const regex = new RegExp(escapedBookPage, "g");
+
+      const matches = input.match(regex);
+
+      count += matches?.length || 0;
+    });
+
+    allPages.push({ pageNumber, count });
   });
 
   return getFormattedText(allPages);
