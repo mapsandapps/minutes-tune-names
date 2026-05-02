@@ -17,8 +17,9 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [isShowingAdvancedSettings, showAdvancedSettings] = useState(false);
 
-  const fourShapeBooks = tunebooks.filter((book) => book.numberOfShapes === 4);
-  const sevenShapeBooks = tunebooks.filter((book) => book.numberOfShapes === 7);
+  const fourShapeBooks = tunebooks.filter((book) => (book.numberOfShapes === 4 && !book.isHistorical));
+  const sevenShapeBooks = tunebooks.filter((book) => (book.numberOfShapes === 7 && !book.isHistorical));
+  const historicalBooks = tunebooks.filter((book) => book.isHistorical);
 
   // only show advanced settings via browser console
   // type `showAdvancedSettings(true)` in the console to show
@@ -77,6 +78,13 @@ function App() {
           </optgroup>
           <optgroup label="Seven shapes">
             {sevenShapeBooks.map((book) => (
+              <option key={book.id} value={book.id}>
+                {book.name}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Historical">
+            {historicalBooks.map((book) => (
               <option key={book.id} value={book.id}>
                 {book.name}
               </option>
