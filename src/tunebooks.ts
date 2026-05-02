@@ -5,7 +5,7 @@ export interface Tunebook {
   prefix?: string;
   suffix: string;
   numberOfShapes: number;
-  isLegacy?: boolean;
+  isHistorical?: boolean;
 }
 
 const denson2025 = {
@@ -7449,6 +7449,7 @@ export const tunebooks: Tunebook[] = [
   {
     name: "The Social Harp",
     id: "sch",
+    data: sch,
     prefix: "ScH",
     suffix: "(ScH)",
     numberOfShapes: 4
@@ -7481,6 +7482,7 @@ export const tunebooks: Tunebook[] = [
   {
     name: "Christian Harmony \"Carolina book\"",
     id: "chw",
+    data: chw,
     prefix: "CHw",
     suffix: "(CHw)",
     numberOfShapes: 7,
@@ -7489,6 +7491,7 @@ export const tunebooks: Tunebook[] = [
   {
     name: "Christian Harmony \"Alabama book\"",
     id: "chdp",
+    data: chdp,
     prefix: "CHdp",
     suffix: "(CHdp)",
     numberOfShapes: 7,
