@@ -8261,8 +8261,8 @@ export const tunebooks: Tunebook[] = [
   },
   {
     name: "2006 Cooper Book",
-    id: "cooper",
-    data: cooper,
+    id: "cooper2006",
+    data: cooper2006,
     suffix: "(2006)",
     numberOfShapes: 4,
     isHistorical: true,
