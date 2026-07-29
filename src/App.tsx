@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DOMPurify from "dompurify";
 import "./App.css";
 import { tunebooks } from "./tunebooks.ts";
@@ -6,9 +6,31 @@ import Instructions from "./Instructions.tsx";
 import { replaceNumbersAndAddTooltips } from "./helpers.ts";
 import { Analytics } from "@vercel/analytics/react";
 
+const STORAGE_KEY = "minutes-draft";
+const EIGHT_HOURS = 8 * 60 * 60 * 1000;
+
 function App() {
+  const [input, setInput] = useState(() => {
+    // initialize from local storage, if last edit was in the last eight hours
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      console.log(saved);
+      if (!saved) return "";
+
+      const { input, timestamp } = JSON.parse(saved);
+      console.log({
+        input,
+        timestamp,
+        isNew: Date.now() - timestamp < EIGHT_HOURS,
+      });
+      if (Date.now() - timestamp < EIGHT_HOURS) return input;
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    return "";
+  });
   const [tunebook, setTunebook] = useState("denson2025"); // can be "none", as well as any tunebook from `tunebooks`
-  const [input, setInput] = useState("");
   const [output, setOutput] = useState<string | undefined>();
   const [isUsingMultipleBooks, setUsingMultipleBooks] =
     useState<boolean>(false);
@@ -17,9 +39,33 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [isShowingAdvancedSettings, showAdvancedSettings] = useState(false);
 
-  const fourShapeBooks = tunebooks.filter((book) => (book.numberOfShapes === 4 && !book.isHistorical));
-  const sevenShapeBooks = tunebooks.filter((book) => (book.numberOfShapes === 7 && !book.isHistorical));
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const fourShapeBooks = tunebooks.filter(
+    (book) => book.numberOfShapes === 4 && !book.isHistorical,
+  );
+  const sevenShapeBooks = tunebooks.filter(
+    (book) => book.numberOfShapes === 7 && !book.isHistorical,
+  );
   const historicalBooks = tunebooks.filter((book) => book.isHistorical);
+
+  // update draft in localStorage as user types
+  useEffect(() => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          input,
+          timestamp: Date.now(),
+        }),
+      );
+    }, 300);
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [input]);
 
   // only show advanced settings via browser console
   // type `showAdvancedSettings(true)` in the console to show

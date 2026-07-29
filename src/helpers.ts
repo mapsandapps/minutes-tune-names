@@ -249,6 +249,8 @@ export const replaceNumbersAndAddTooltips = (
   isPageBeforeBook?: boolean,
   shouldShowUnmatched?: boolean, // always true, for now
 ) => {
+  if (!text) return;
+
   const textWithNames = replaceNumbers(
     text,
     primaryTunebook,
